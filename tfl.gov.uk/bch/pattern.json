@@ -57,7 +57,7 @@
             }
         },
         {
-            "Id": "6",
+            "Id": "cache",
             "Type": "cache",
             "Rule": {
                 "KeyPath": ".name",
@@ -104,7 +104,7 @@
         {
             "Id": "7",
             "FromId": "3",
-            "ToId": "6",
+            "ToId": "cache",
             "ToRoute": "in"
         }
     ]
