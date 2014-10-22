@@ -1,0 +1,111 @@
+{
+    "Blocks": [
+        {
+            "Id": "1",
+            "Type": "bang",
+            "Rule": null,
+            "Position": {
+                "X": 408,
+                "Y": 50
+            }
+        },
+        {
+            "Id": "2",
+            "Type": "webRequest",
+            "Rule": {
+                "BodyPath": ".",
+                "Headers": {},
+                "Method": "GET",
+                "Url": "http://localhost:9000/tfl.gov.uk/bch/availability.xml",
+                "UrlPath": ""
+            },
+            "Position": {
+                "X": 234,
+                "Y": 120
+            }
+        },
+        {
+            "Id": "3",
+            "Type": "unpack",
+            "Rule": {
+                "ArrayPath": ".stations.station",
+                "LabelPath": ""
+            },
+            "Position": {
+                "X": 113,
+                "Y": 348
+            }
+        },
+        {
+            "Id": "4",
+            "Type": "tolog",
+            "Rule": null,
+            "Position": {
+                "X": 241,
+                "Y": 527
+            }
+        },
+        {
+            "Id": "8",
+            "Type": "parsexml",
+            "Rule": {
+                "Path": ".body"
+            },
+            "Position": {
+                "X": 299,
+                "Y": 216
+            }
+        },
+        {
+            "Id": "6",
+            "Type": "cache",
+            "Rule": {
+                "KeyPath": ".name",
+                "TimeToLive": "60m",
+                "ValuePath": ".nbBikes"
+            },
+            "Position": {
+                "X": 122,
+                "Y": 541
+            }
+        }
+    ],
+    "Connections": [
+        {
+            "Id": "5",
+            "FromId": "1",
+            "ToId": "2",
+            "ToRoute": "in"
+        },
+        {
+            "Id": "11",
+            "FromId": "8",
+            "ToId": "3",
+            "ToRoute": "in"
+        },
+        {
+            "Id": "12",
+            "FromId": "3",
+            "ToId": "4",
+            "ToRoute": "in"
+        },
+        {
+            "Id": "9",
+            "FromId": "2",
+            "ToId": "8",
+            "ToRoute": "in"
+        },
+        {
+            "Id": "10",
+            "FromId": "8",
+            "ToId": "4",
+            "ToRoute": "in"
+        },
+        {
+            "Id": "7",
+            "FromId": "3",
+            "ToId": "6",
+            "ToRoute": "in"
+        }
+    ]
+}
