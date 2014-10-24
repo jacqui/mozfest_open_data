@@ -1,0 +1,98 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>streamtools open data: bike donut chart</title>
+  <script src="/js/jquery.js"></script>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/Chart.js"></script>
+   <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <style>
+      #map { height: 900px; }
+    </style>
+</head>
+<body id="demos">
+  <div class="jumbotron">
+    <h1>Live Bike Availability</h1>
+    <p id="leadPara" class="lead">
+    </p>
+  </div>
+
+  <div id="reportContainer" class="container">
+    <div class="row">
+      <p id="buttonPara"><a id="getStarted" class="btn btn-lg btn-success" role="button">Get Started!</a></p>
+    </div>
+
+    <div class="row">
+      <div id="map"></div>
+    </div>
+  </div>
+</body>
+
+<script>
+$(document).ready(function() {
+  var lostProperty = {};
+  var counts = [];
+  var totalAvailable = 0;
+  var totalDocks = 0;
+
+  var keys = [];
+
+  var map = L.map('map').setView([51.501384,  0.004727], 13);
+  L.tileLayer('http://{s}.tiles.mapbox.com/v3/janelastname.k1l764fc/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18
+}).addTo(map);
+
+  $("#getStarted").click(function(e) {
+    e.preventDefault;
+
+    $.getJSON("http://localhost:7070/clear", function(data) {
+      if (data.daemon != "OK") {
+        alert("Sorry, I couldn't clear out your streamtools. The response I got is: " + JSON.stringify(data));
+      } else {
+        $.getJSON("http://localhost:9000/data.police.uk/leaflet/pattern.json", function(data) {
+          pattern = JSON.stringify(data);
+          $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: "http://localhost:7070/import",
+            data: pattern,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data) {
+              $("#buttonPara").fadeOut("slow");
+              $("#buttonPara").html("<a class='btn btn-lg btn-info' target='streamtools' href='http://localhost:7070' role='button'>Open Streamtools</a>");
+
+              $("#buttonPara").fadeIn("slow");
+
+              $.ajax({
+                type: "GET",
+                crossDomain: true,
+                url: "http://localhost:7070/blocks/31/query",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data) {
+                  var socket = new WebSocket('ws://localhost:7070/ws/24');
+                  socket.onmessage = function(event) {
+                    data = JSON.parse(event.data);
+                    var marker = L.marker([data.location.latitude, data.location.longitude]).addTo(map);
+                    marker.bindPopup(data.location.street.name + ", " + data["outcome_status"].category)
+                  };
+                }
+              }).done(function() {
+
+              });
+}
+});
+});
+}
+});
+});
+});
+</script>
+
+</body>
+</html>
