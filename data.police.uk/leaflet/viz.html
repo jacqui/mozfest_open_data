@@ -33,18 +33,15 @@
 
 <script>
 $(document).ready(function() {
-  var lostProperty = {};
-  var counts = [];
-  var totalAvailable = 0;
-  var totalDocks = 0;
 
-  var keys = [];
+  var curCategory = "";
 
   var map = L.map('map').setView([51.501384,  0.004727], 13);
   L.tileLayer('http://{s}.tiles.mapbox.com/v3/janelastname.k1l764fc/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     maxZoom: 18
 }).addTo(map);
+  var layer = L.layerGroup().addTo(map);
 
   $("#getStarted").click(function(e) {
     e.preventDefault;
@@ -78,8 +75,21 @@ $(document).ready(function() {
                   var socket = new WebSocket('ws://localhost:7070/ws/24');
                   socket.onmessage = function(event) {
                     data = JSON.parse(event.data);
-                    var marker = L.marker([data.location.latitude, data.location.longitude]).addTo(map);
-                    marker.bindPopup(data.location.street.name + ", " + data["outcome_status"].category)
+                    console.log(data.category)
+
+                    if (curCategory == "") {
+                      curCategory = data.category;
+                    }
+
+                    if (curCategory != data.category) {
+                      console.log("test")
+                      layer.clearLayers();
+                      curCategory = data.category;
+                    }
+
+                    var marker = L.marker([data.location.latitude, data.location.longitude]);
+                    marker.bindPopup(data.category + ", " + data.location.street.name + ", " + data["outcome_status"].category)
+                    layer.addLayer(marker);
                   };
                 }
               }).done(function() {
