@@ -1,0 +1,118 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>streamtools open data: bike donut chart</title>
+  <script src="/js/jquery.js"></script>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/Chart.js"></script>
+</head>
+<body id="demos">
+  <div class="jumbotron">
+    <h1>Live Bike Availability</h1>
+    <p id="leadPara" class="lead">
+    </p>
+  </div>
+
+  <div id="reportContainer" class="container">
+    <div class="row">
+      <p id="buttonPara"><a id="getStarted" class="btn btn-lg btn-success" role="button">Get Started!</a></p>
+    </div>
+
+    <div id="charts" class="row">
+      <!-- <canvas id="myChart" width="400" height="400"></canvas> -->
+      <!-- <table class="table">
+        <thead><th>station</th><th>available bikes</th></thead>
+        <tbody id="bikesTable">
+        </tbody>
+      </table> -->
+    </div>
+  </div>
+</body>
+
+<script>
+$(document).ready(function() {
+  var lostProperty = {};
+  var counts = [];
+  var totalAvailable = 0;
+  var totalDocks = 0;
+
+  var keys = [];
+
+  $("#getStarted").click(function(e) {
+    e.preventDefault;
+
+    $.getJSON("http://localhost:7070/clear", function(data) {
+      if (data.daemon != "OK") {
+        alert("Sorry, I couldn't clear out your streamtools. The response I got is: " + JSON.stringify(data));
+      } else {
+        $.getJSON("http://localhost:9000/bike-stats.co.uk/bikes/pattern.json", function(data) {
+          pattern = JSON.stringify(data);
+          $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: "http://localhost:7070/import",
+            data: pattern,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data) {
+              $("#buttonPara").fadeOut("slow");
+              $("#buttonPara").html("<a class='btn btn-lg btn-info' target='streamtools' href='http://localhost:7070' role='button'>Open Streamtools</a>");
+
+              $("#buttonPara").fadeIn("slow");
+
+              $.ajax({
+                type: "GET",
+                crossDomain: true,
+                url: "http://localhost:7070/blocks/6/query",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data) {
+                  var socket = new WebSocket('ws://localhost:7070/ws/17');
+                  socket.onmessage = function(event) {
+                    data = JSON.parse(event.data);
+
+                    if ($("div #" + data["@ID"]).length > 0) {
+                      $("div #" + data["@ID"]).remove();
+                    }
+                    $("#charts").append('<div style="float:left;min-width:250px" id="' + data["@ID"] + '"><p>' + data.name + '</p><canvas id="chart-' + data["@ID"] + '" width="200" height="200"></canvas></div>')
+
+                    var info = [
+                    {
+                      value: parseInt(data.bikesAvailable),
+                      color:"#46BFBD",
+                      highlight: "#5AD3D1",
+                      label: "Available Bikes"
+                    },
+                    {
+                      value: parseInt(data.emptySlots),
+                      color: "#F7464A",
+                      highlight: "#FF5A5E",
+                      label: "Bikes In Use"
+                    }
+                    ]
+
+                    console.log("canvas #chart-" + data["@ID"])
+                    console.log($("canvas #chart-" + data["@ID"]).length);
+                    console.log(document.getElementById("chart-" + data["@ID"]));
+
+                    var ctx = document.getElementById("chart-" + data["@ID"]).getContext("2d");
+                    var myNewChart = new Chart(ctx).Doughnut(info);
+
+                  };
+                }
+              }).done(function() {
+
+              });
+}
+});
+});
+}
+});
+});
+});
+</script>
+
+</body>
+</html>
