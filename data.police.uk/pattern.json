@@ -25,7 +25,7 @@
             }
         },
         {
-            "Id": "4",
+            "Id": "bang",
             "Type": "bang",
             "Rule": null,
             "Position": {
@@ -41,12 +41,12 @@
                 "LabelPath": ""
             },
             "Position": {
-                "X": 260,
-                "Y": 328
+                "X": 248,
+                "Y": 296
             }
         },
         {
-            "Id": "8",
+            "Id": "histogram",
             "Type": "histogram",
             "Rule": {
                 "Path": ".category",
@@ -58,14 +58,26 @@
             }
         },
         {
-            "Id": "11",
+            "Id": "count",
             "Type": "count",
             "Rule": {
                 "Window": "1h0m0s"
             },
             "Position": {
-                "X": 194,
-                "Y": 542
+                "X": 310,
+                "Y": 440
+            }
+        },
+        {
+            "Id": "7",
+            "Type": "histogram",
+            "Rule": {
+                "Path": ".location.street.name",
+                "Window": "1h0m0s"
+            },
+            "Position": {
+                "X": 419,
+                "Y": 364
             }
         }
     ],
@@ -73,7 +85,7 @@
         {
             "Id": "9",
             "FromId": "6",
-            "ToId": "8",
+            "ToId": "histogram",
             "ToRoute": "in"
         },
         {
@@ -84,14 +96,20 @@
         },
         {
             "Id": "5",
-            "FromId": "4",
+            "FromId": "bang",
             "ToId": "1",
             "ToRoute": "in"
         },
         {
             "Id": "12",
             "FromId": "6",
-            "ToId": "11",
+            "ToId": "count",
+            "ToRoute": "in"
+        },
+        {
+            "Id": "10",
+            "FromId": "6",
+            "ToId": "7",
             "ToRoute": "in"
         }
     ]
