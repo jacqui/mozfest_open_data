@@ -51,7 +51,7 @@ $(document).ready(function() {
       if (data.daemon != "OK") {
         alert("Sorry, I couldn't clear out your streamtools. The response I got is: " + JSON.stringify(data));
       } else {
-        $.getJSON("http://localhost:9000/data.police.uk/leaflet/pattern.json", function(data) {
+        $.getJSON("http://localhost:9000/data.police.uk/pattern.json", function(data) {
           pattern = JSON.stringify(data);
           $.ajax({
             type: "POST",
