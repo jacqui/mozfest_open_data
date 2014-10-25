@@ -77,21 +77,15 @@ $(document).ready(function() {
                   socket.onmessage = function(event) {
                     data = JSON.parse(event.data);
 
-                    if (curCategory == "") {
-                      curCategory = data.category;
-                      $("#current-category").text(curCategory);
-                    }
-
-                    if (curCategory != data.category) {
-                      console.log("test")
-                      layer.clearLayers();
-                      curCategory = data.category;
-                    }
-
                     var marker = L.marker([data.location.latitude, data.location.longitude]);
-                    marker.bindPopup(data.category + ", " + data.location.street.name + ", " + data["outcome_status"].category)
+                    marker.bindPopup(data.category + ", " + data.month + ", " + data.location.street.name + ", " + data["outcome_status"].category)
                     layer.addLayer(marker);
                   };
+
+                  var socket2 = new WebSocket('ws://localhost:7070/ws/31');
+                  socket2.onmessage = function(bang) {
+                    layer.clearLayers();
+                  }
                 }
               }).done(function() {
 
