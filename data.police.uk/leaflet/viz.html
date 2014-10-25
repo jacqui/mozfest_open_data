@@ -1,7 +1,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>streamtools open data: bike donut chart</title>
+  <title>streamtools open data: local crime map by category</title>
   <script src="/js/jquery.js"></script>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
@@ -15,7 +15,7 @@
 </head>
 <body id="demos">
   <div class="jumbotron">
-    <h1>Live Bike Availability</h1>
+    <h1>Local Crime Map By Category</h1>
     <p id="leadPara" class="lead">
     </p>
   </div>
@@ -23,6 +23,8 @@
   <div id="reportContainer" class="container">
     <div class="row">
       <p id="buttonPara"><a id="getStarted" class="btn btn-lg btn-success" role="button">Get Started!</a></p>
+      <p id="current-category"></p>
+      <br/>
     </div>
 
     <div class="row">
@@ -75,10 +77,10 @@ $(document).ready(function() {
                   var socket = new WebSocket('ws://localhost:7070/ws/24');
                   socket.onmessage = function(event) {
                     data = JSON.parse(event.data);
-                    console.log(data.category)
 
                     if (curCategory == "") {
                       curCategory = data.category;
+                      $("#current-category").text(curCategory);
                     }
 
                     if (curCategory != data.category) {
