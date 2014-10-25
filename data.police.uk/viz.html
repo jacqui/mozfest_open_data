@@ -81,7 +81,7 @@ $(document).ready(function() {
                     $("#current-category").text(curCategory + ", " + data.month)
 
                     var marker = L.marker([data.location.latitude, data.location.longitude]);
-                    marker.bindPopup(data.category + ", " + data.month + ", " + data.location.street.name + ", " + data["outcome_status"].category)
+                    marker.bindPopup(data.category + ", " + "ID#" + data.id + ", " + data.month + ", " + data.location.street.name + ", " + data["outcome_status"].category)
                     layer.addLayer(marker);
                   };
 
